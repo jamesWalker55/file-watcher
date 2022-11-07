@@ -23,18 +23,18 @@ enum Event {
     Rename(&path, &path, TargetKind),
 }
 
-struct CommonWatcher {
+struct StandardWatcher {
     base_watcher: dyn notify::Watcher,
     channel: Sender<EventLoopMsg>,
 }
 
-impl CommonWatcher {
+impl StandardWatcher {
     fn new<F: EventHandler>(event_handler: F) -> Result<Self, Error> {
         if RecommendedWatcher::kind() != ReadDirectoryChangesWatcher {
             return Err(Error::SystemNotSupported);
         }
 
-        Ok(CommonWatcher {
+        Ok(StandardWatcher {
             base_watcher: RecommendedWatcher(event_handler, Config::default()),
             channel: event_handler,
         })
